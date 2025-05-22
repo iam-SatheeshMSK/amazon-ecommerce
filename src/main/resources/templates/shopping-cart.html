@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Shopping Cart</title>
+</head>
+<body>
+    <h1>Your Shopping Cart</h1>
+    
+    <!-- Display cart items -->
+    <div th:if="${not #lists.isEmpty(cartItems)}">
+        <ul>
+            <li th:each="item : ${cartItems}">
+                <span th:text="${item.productName}"></span> - 
+                $<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}"></span> x 
+                <span th:text="${item.quantity}"></span>
+                <form th:action="@{/cart/remove/{id}(id=${item.productId})}" method="post">
+                    <button type="submit">Remove</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Add item form (Sample for testing) -->
+    <h2>Add Test Item</h2>
+    <form action="/cart/add" method="post">
+        <input type="hidden" name="productId" value="123">
+        <input type="hidden" name="productName" value="Sample Product">
+        <input type="hidden" name="price" value="29.99">
+        <button type="submit">Add Sample Item</button>
+    </form>
+</body>
+</html>
