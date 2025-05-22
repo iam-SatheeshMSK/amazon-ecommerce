@@ -1,5 +1,6 @@
 package com.amazon.ecommerce;
 
+import com.amazon.ecommerce.model.ShoppingCartItem; // Critical import
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@SessionAttributes("cart") // Store cart in session
+@SessionAttributes("cart") 
 public class ShoppingCartController {
 
     // Initialize cart as a list of items
@@ -25,33 +26,33 @@ public class ShoppingCartController {
 
     // Add item to cart
     @PostMapping("/cart/add")
-    public String addToCart(@ModelAttribute("cart") List<ShoppingCartItem> cart,
-                            @RequestParam String productId,
-                            @RequestParam String productName,
-                            @RequestParam double price) {
-        // Check if item already exists in cart
+    public String addToCart(
+        @ModelAttribute("cart") List<ShoppingCartItem> cart,
+        @RequestParam String productId,
+        @RequestParam String productName,
+        @RequestParam double price
+    ) {
         boolean itemExists = cart.stream()
-                .anyMatch(item -> item.getProductId().equals(productId));
+            .anyMatch(item -> item.getProductId().equals(productId));
 
         if (itemExists) {
-            // Update quantity
             cart.forEach(item -> {
                 if (item.getProductId().equals(productId)) {
                     item.setQuantity(item.getQuantity() + 1);
                 }
             });
         } else {
-            // Add new item
             cart.add(new ShoppingCartItem(productId, productName, price, 1));
         }
-
-        return "redirect:/cart"; // Redirect to cart page
+        return "redirect:/cart";
     }
 
     // Remove item from cart
     @PostMapping("/cart/remove/{productId}")
-    public String removeFromCart(@ModelAttribute("cart") List<ShoppingCartItem> cart,
-                                 @PathVariable String productId) {
+    public String removeFromCart(
+        @ModelAttribute("cart") List<ShoppingCartItem> cart,
+        @PathVariable String productId
+    ) {
         cart.removeIf(item -> item.getProductId().equals(productId));
         return "redirect:/cart";
     }
